@@ -152,23 +152,9 @@ yum install -y nginx awscli
 systemctl start nginx
 systemctl enable nginx
 
-# IMDSv2 — fetch token first
-TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" \
-  -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
-
-# Fetch instance metadata
-INSTANCE_ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" \
-  http://169.254.169.254/latest/meta-data/instance-id)
-AZ=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" \
-  http://169.254.169.254/latest/meta-data/placement/availability-zone)
 
 # Pull website file from S3
 aws s3 cp s3://YOUR-BUCKET-NAME/index.html /usr/share/nginx/html/index.html
-
-# Inject instance info into page
-sed -i "s/INSTANCE_PLACEHOLDER/$INSTANCE_ID/g" /usr/share/nginx/html/index.html
-sed -i "s/AZ_PLACEHOLDER/$AZ/g" /usr/share/nginx/html/index.html
-
 chmod 644 /usr/share/nginx/html/index.html
 ```
 
@@ -298,12 +284,3 @@ Delete resources in this order to avoid dependency errors:
 | No IAM role attached | aws s3 cp fails silently | Edit template, attach EC2S3ReadRole |
 | IMDSv1 blocked | curl metadata returns empty | Use IMDSv2 with token header |
 
----
-
-## What's Next
-
-| Project | What you'll learn |
-|---|---|
-| Project 6 — Lambda + API Gateway | Serverless backend, no EC2 needed |
-| Project 7 — CI/CD Pipeline | Auto deploy on every git push |
-| CloudFormation for this setup | Rebuild entire infrastructure as code |
