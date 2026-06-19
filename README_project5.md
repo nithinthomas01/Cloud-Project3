@@ -269,8 +269,6 @@ New instances pull the updated file from S3 on boot.
 | S3 | 5 GB / 20k requests | Well within limits |
 | VPC/IGW/SG | Free always | No cost |
 
-> **Warning:** Setting desired capacity to 2 uses 1500 hrs/month — exceeds the 750 hr free tier limit. Only scale to 2 temporarily for testing, then set back to 1.
-
 ---
 
 ## Cleanup
@@ -298,12 +296,3 @@ Delete resources in this order to avoid dependency errors:
 | No IAM role attached | aws s3 cp fails silently | Edit template, attach EC2S3ReadRole |
 | IMDSv1 blocked | curl metadata returns empty | Use IMDSv2 with token header |
 
----
-
-## What's Next
-
-| Project | What you'll learn |
-|---|---|
-| Project 6 — Lambda + API Gateway | Serverless backend, no EC2 needed |
-| Project 7 — CI/CD Pipeline | Auto deploy on every git push |
-| CloudFormation for this setup | Rebuild entire infrastructure as code |
