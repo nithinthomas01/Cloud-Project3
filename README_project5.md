@@ -152,23 +152,8 @@ yum install -y nginx awscli
 systemctl start nginx
 systemctl enable nginx
 
-# IMDSv2 — fetch token first
-TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" \
-  -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
-
-# Fetch instance metadata
-INSTANCE_ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" \
-  http://169.254.169.254/latest/meta-data/instance-id)
-AZ=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" \
-  http://169.254.169.254/latest/meta-data/placement/availability-zone)
-
 # Pull website file from S3
 aws s3 cp s3://YOUR-BUCKET-NAME/index.html /usr/share/nginx/html/index.html
-
-# Inject instance info into page
-sed -i "s/INSTANCE_PLACEHOLDER/$INSTANCE_ID/g" /usr/share/nginx/html/index.html
-sed -i "s/AZ_PLACEHOLDER/$AZ/g" /usr/share/nginx/html/index.html
-
 chmod 644 /usr/share/nginx/html/index.html
 ```
 
